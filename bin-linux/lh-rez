@@ -1,0 +1,20 @@
+#!/bin/sh
+
+WD="$LH_MULTIUSER"
+
+if [ ! "$WD" = "" ]; then
+  WD="/$WD"
+fi
+
+if [ "$1" = "" ]; then
+  echo "rez (rez.)_what_ - LostHeros CLI"
+  echo ""
+  cd .$WD/
+  ls rez.*
+else
+  GW=`echo "$1" | sed 's/\rez.//g'`
+  printf "%s=" "$GW"
+  cat ".$WD/rez.$GW"
+fi
+
+exit 0

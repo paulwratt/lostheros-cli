@@ -1,0 +1,109 @@
+#!/bin/sh
+#if expr match "$0" ".*/lh\-" ; then
+#  echo "get Profile - LostHeros CLI"
+#  echo ""
+#fi
+
+BD="`test -d ./.bin && echo "/.bin"`"
+WD="$LH_MULTIUSER"
+
+if [ ! "$WD" = "" ]; then
+  WD="/$WD"
+fi
+
+if [ ! -e .$WD/.profile.html -o ! -e .$WD/.profile.cut ]; then
+  # update all .files
+  if ! .$BD/lh-get-update ; then
+    echo "fail profile update"
+    exit 1
+  fi
+fi
+
+
+# profile
+echo "--PROFILE----------" > .$WD/xtx.profile
+head --silent --lines=6 .$WD/.profile.cut | tail --silent --lines=3 > .$WD/.info.cut
+head --silent --lines=1 .$WD/.info.cut | cut -d '>' --fields=3 > .$WD/val.nam
+head --silent --lines=2 .$WD/.info.cut | tail --silent --lines=1 | cut -d '>' --fields=3 | cut -d '<' --fields=1 > .$WD/val.prf
+tail --silent --lines=1 .$WD/.info.cut | cut -d '<' --fields=1 > .$WD/val.cln
+tail --silent --lines=1 .$WD/.info.cut | cut -d '>' --fields=3 | cut -d '<' --fields=1 > .$WD/val.lot
+
+
+# info
+echo "Name: `cat .$WD/val.nam`" > .$WD/xtx.info
+echo "Profession: `cat .$WD/val.prf`" >> .$WD/xtx.info
+echo "Clan: `cat .$WD/val.cln`" >> .$WD/xtx.info
+echo "Location: `cat .$WD/val.lot`" >> .$WD/xtx.info
+cat .$WD/xtx.info >> .$WD/xtx.profile
+
+
+## keep for reference - level
+#grep "class='profileName'" .$WD/.profile.html | cut -d ';' --fields=2 | cut -d '<' --fields=1 | head --silent --lines=7 > .$WD/.left.cut
+#grep "class='profileValue'" .$WD/.profile.html | cut -d '>' --fields=2 | cut -d '<' --fields=1 | tr '.' ',' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//' | head --silent --lines=7 > .$WD/.right.cut
+#printf "" > .$WD/xtx.level
+#for I in `seq 1 7`; do
+#  J=$(( $I - 1 ))
+#  echo "`cat .$WD/.left.cut | head -n $I | tail -n 1` `cat .$WD/.right.cut | head -n $I | tail -n 1`" >> .$WD/xtx.level
+#done
+
+
+# level
+grep "class='profileName'" .$WD/.profile.cut | head --silent --lines=7 | cut -d ';' --fields=2 | cut -d '<' --fields=1 > .$WD/.left.cut
+grep "class='profileValue'" .$WD/.profile.cut | head --silent --lines=7 |cut -d '>' --fields=2 | cut -d '<' --fields=1 | tr '.' ',' | sed 's/^[[:blank:]]*//;s/[[:blank:]]*$//'  > .$WD/.right.cut
+paste -d " " .$WD/.left.cut .$WD/.right.cut > .$WD/xtx.current
+echo "--CURRENT----------" >> .$WD/xtx.profile
+cat .$WD/xtx.current >> .$WD/xtx.profile
+head --silent --lines=4 .$WD/xtx.current > .$WD/xtx.level
+tail --silent --lines=3 .$WD/xtx.current > .$WD/xtx.coins
+
+
+# stats
+head --silent --lines=48 .$WD/.profile.cut | tail --silent --lines=4 | grep "class='profileName'" | grep "class='profileValue'" | cut -d '>' --fields=3,6 --output-delimiter='<' | cut -d '<' --fields=1,3 --output-delimiter='' | sed 's/\(.*\)\ \(.*\)/\1\:\ \2/g' | tr -d "\0" > .$WD/xtx.stats
+echo "--STATS------------" >> .$WD/xtx.profile
+cat .$WD/xtx.stats >> .$WD/xtx.profile
+
+
+# combat
+head --silent --lines=57 .$WD/.profile.cut | tail --silent --lines=6 > .$WD/.info.cut
+grep "class='profileName'" .$WD/.info.cut | cut -d '>' --fields=3 | cut -d '<' --fields=1 > .$WD/.left.cut
+grep "class='profileValue'" .$WD/.info.cut | cut -d '>' --fields=2 | cut -d '<' --fields=1 | sed 's/\./\,/g' > .$WD/.right.cut
+paste -d " " .$WD/.left.cut .$WD/.right.cut > .$WD/xtx.combat
+head --silent --lines=60 .$WD/.profile.cut | tail --silent --lines=1 | grep "class='profileName'" | grep "class='profileValue'" | cut -d '>' --fields=3,6,7 --output-delimiter='<' | cut -d '<' --fields=1,3,5 --output-delimiter=' ' | sed 's/\&nbsp\;//g' | sed 's/\(.*\ .*\)\ \(.*\ .*\)/\1\:\ \2/g' | sed 's/\./\,/g' >> .$WD/xtx.combat
+echo "--COMBAT-----------" >> .$WD/xtx.profile
+cat .$WD/xtx.combat >> .$WD/xtx.profile
+
+
+# skills
+ST=`grep -n Skills .$WD/.profile.cut | cut -d ':' --fields=1`
+ND=`grep -n --max-count=1 /table .$WD/.profile.cut | cut -d ':' --fields=1`
+tail --silent --lines=+${ST} .$WD/.profile.cut | head --silent --lines=$(( $ND - $ST )) > .$WD/.info.cut
+grep \&nbsp\; .$WD/.info.cut | cut -d ';' --fields=2 | cut -d '<' --fields=1 > .$WD/.left.cut
+grep "class=profileValue" .$WD/.info.cut | cut -d '>' --fields=2 | cut -d '<' --fields=1 > .$WD/.right.cut
+paste -d " " .$WD/.left.cut .$WD/.right.cut > .$WD/xtx.skills
+echo "--SKILLS-----------" >> .$WD/xtx.profile
+cat .$WD/xtx.skills >> .$WD/xtx.profile
+
+
+# delete
+rm -f .$WD/.profile.cut .$WD/.info.cut .$WD/.left.cut .$WD/.right.cut
+#rm -f .$WD/.info.cut
+#rm -f .$WD/.left.cut
+#rm -f .$WD/.right.cut
+
+
+# bits
+grep "Gold" .$WD/xtx.current | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.gld
+grep "Energy" .$WD/xtx.current | cut -d ' ' --fields=2 | cut -d '/' --fields=1 | tr -d ',' > .$WD/val.nrg
+grep "Diamonds" .$WD/xtx.current | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.dmd
+grep --max-count=1 "Level" .$WD/xtx.current | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.lvl
+grep "XP:" .$WD/xtx.current | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.xp
+grep "Str" .$WD/xtx.stats | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.str
+grep "Dex" .$WD/xtx.stats | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.dex
+grep "Int" .$WD/xtx.stats | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.int
+grep "Wis" .$WD/xtx.stats | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.wis
+grep "Damage" .$WD/xtx.combat | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.dmg
+grep "Armor" .$WD/xtx.combat | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.amr
+grep "Hit" .$WD/xtx.combat | cut -d ' ' --fields=3 | tr -d ',' > .$WD/val.hp
+
+exit 0
+

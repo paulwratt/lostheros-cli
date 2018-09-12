@@ -1,0 +1,56 @@
+#!/bin/sh
+#if expr match "$0" ".*/lh\-" > /dev/null ; then
+#  echo "is-logged-in - LostHeros CLI"
+#  echo ""
+#fi
+
+EC=0
+CJ="cookie.jar"
+BD="`test -d ./.bin && echo "/.bin"`"
+WD="$LH_MULTIUSER"
+
+if [ ! "$1" = "" ]; then
+  WD="$1"
+fi
+
+if [ ! "$WD" = "" ]; then
+  CJ="$WD/$CJ"
+fi
+
+if [ ! -e "$CJ" ]; then
+  echo " $WD never logged in"
+  exit 1
+fi
+
+if which curl > /dev/null ; then
+  RV="`curl --silent --cookie "$CJ" "http://webgame.losthero.com/index.php?" | grep 'HTTP-EQUIV' | grep 'Refresh' | grep 'URL=login.php"'`"
+  EC=$?
+  if [ $EC -gt 0 ]; then
+    echo "error: curl: $EC"
+    grep --max-count=1 "^$EC" .$BD/errors.curl
+  fi
+elif which wget > /dev/null ; then
+  wget --quiet --load-cookies "$CJ" "http://webgame.losthero.com/index.php?"
+  EC=$?
+  RV="`grep 'HTTP-EQUIV' index.php | grep 'Refresh' | grep 'URL=login.php"'`"
+  if [ $EC -gt 0 ]; then
+    echo "error: wget: $EC"
+    grep --max-count=1 "^$EC" .$BD/errors.wget
+  fi
+  rm -f index.php*
+else
+  echo "error: need 'curl' or 'wget'"
+  exit 2
+fi
+
+if [ $EC -gt 0 ]; then
+  exit 3
+fi
+
+if [ "$RV" = "" ]; then
+  echo "  logged in: yes"
+else
+  echo "  logged in: no"
+fi
+
+exit 0

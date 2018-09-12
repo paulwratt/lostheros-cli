@@ -1,0 +1,100 @@
+#!/bin/sh
+#if expr match "$0" ".*/lh\-" > /dev/null ; then
+#  echo "update .files - LostHeros CLI"
+#  echo ""
+#fi
+
+TST=1
+EC=0
+CJ="cookie.jar"
+WD="$LH_MULTIUSER"
+BD="`test -d ./.bin && echo "/.bin"`"
+
+if [ ! "$1" = "" ]; then
+  WD="$1"
+fi
+
+if [ ! "$WD" = "" ]; then
+  CJ="$WD/$CJ"
+  WD="/$WD"
+fi
+
+SV="`grep --no-messages "^server=" .$WD/auto.set` | cut -d = --fields=2"
+
+if [ ! "$SV" = "" ]; then
+  SV="http://webgame.losthero.com/"
+fi
+
+if [ $TST -eq 0 ]; then
+if [ ! -e "$CJ" ]; then
+  echo " no cookies: $CJ"
+  exit 1
+fi
+
+if which curl > /dev/null ; then
+  curl --silent --cookie "$CJ" --get --data page=1 --data rnd=`.$BD/lh-random` ${SV}profilePage.php > .$WD/.profile.html
+  EC=$?
+  if [ $EC -gt 0 ]; then
+    echo "error: curl: $EC"
+    grep --max-count=1 "^$EC" .$BD/errors.curl
+  fi
+elif which wget > /dev/null ; then
+  wget --quiet --unlink --load-cookies "$CJ" "${SV}profilePage.php\?page=1&rnd=`.$BD/lh-random`"
+  EC=$?
+  mv -f "profilePage.php*" .$WD/.profile.html
+  if [ $EC -gt 0 ]; then
+    echo "error: wget: $EC"
+    grep --max-count=1 "^$EC" .$BD/errors.wget
+  fi
+else
+  echo "error: need 'curl' or 'wget'"
+  echo ""
+  exit 2
+fi
+fi
+
+if [ $EC -gt 0 ]; then
+  exit 3
+fi
+
+if cat .$WD/.profile.html | grep 'HTTP-EQUIV' | grep 'Refresh' | grep 'URL=login.php"' > /dev/null ; then
+  echo "error: not logged in"
+  rm -f .$WD/.profile.html
+  exit 1
+fi
+
+echo "" > .$WD/.update
+
+
+# profile
+ST=`grep -n --max-count=1 '/table' .$WD/.profile.html | cut -d ':' --fields=1`
+head --silent --lines=$ST .$WD/.profile.html > .$WD/.profile.cut
+
+
+# Equipped
+ST=$(( $ST + 11 ))
+tail --silent --lines=+$ST .$WD/.profile.html > .$WD/.tmp1.tmp
+ST=`grep -n --max-count=1 '/table' .$WD/.tmp1.tmp | cut -d ':' --fields=1`
+head --silent --lines=$ST .$WD/.tmp1.tmp > .$WD/.equip.cut
+
+
+# Resources
+ST=`grep -n --max-count=1 'Resources' .$WD/.tmp1.tmp | cut -d ':' --fields=1`
+tail --silent --lines=+$ST .$WD/.tmp1.tmp > .$WD/.tmp2.tmp
+ST=`grep -n --max-count=1 '/table' .$WD/.tmp2.tmp | cut -d ':' --fields=1`
+head --silent --lines=$ST .$WD/.tmp2.tmp > .$WD/.res.cut
+
+
+# Inventory
+ST=$(( $ST + 11 ))
+tail --silent --lines=+$ST .$WD/.tmp2.tmp > .$WD/.tmp3.tmp
+ST=`grep -n --max-count=1 '/table' .$WD/.tmp3.tmp | cut -d ':' --fields=1`
+head --silent --lines=$ST .$WD/.tmp3.tmp > .$WD/.inv.cut
+
+
+# cleanup
+rm -f .$WD/.tmp1.tmp .$WD/.tmp2.tmp .$WD/.tmp3.tmp
+#rm -f .$WD/.tmp2.tmp
+#rm -f .$WD/.tmp3.tmp
+
+exit 0

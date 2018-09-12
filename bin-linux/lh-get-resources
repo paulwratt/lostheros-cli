@@ -1,0 +1,55 @@
+#!/bin/sh
+#if expr match "$0" ".*/lh\-" ; then
+#  echo "get Resources- LostHeros CLI"
+#  echo ""
+#fi
+
+BD="`test -d ./.bin && echo "/.bin"`"
+WD="$LH_MULTIUSER"
+
+if [ ! "$WD" = "" ]; then
+  WD="/$WD"
+fi
+
+if [ ! -e .$WD/.profile.html -o ! -e .$WD/.res.cut ]; then
+  # update all .files
+  if ! .$BD/lh-get-update ; then
+    echo "fail resources update"
+    exit 1
+  fi
+fi
+
+
+# resources
+grep "^\ \&nbsp\;" .$WD/.res.cut | cut -d ';' --fields=2 | cut -d '<' --fields=1 > .$WD/.left.cut
+grep "class=profileValue" .$WD/.res.cut | cut -d '>' --fields=2 | cut -d '<' --fields=1 > .$WD/.right.cut
+paste -d " " .$WD/.left.cut .$WD/.right.cut > .$WD/xtx.resources
+#echo "--RESOURCES--------" >> .$WD/xtx.profile
+#cat .$WD/xtx.resources >> .$WD/xtx.profile
+
+
+# delete
+rm -f .$WD/.res.cut .$WD/.left.cut .$WD/.right.cut
+#rm -f .$WD/.left.cut
+#rm -f .$WD/.right.cut
+
+
+# bits
+( grep --max-count=1 "Wood" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.wood
+( grep --max-count=1 "Teak" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.teak
+( grep --max-count=1 "Bone" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.bone
+( grep --max-count=1 "Skin" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.skin
+( grep --max-count=1 "Steel" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.steel
+( grep --max-count=1 "Iron" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.iron
+( grep --max-count=1 "Limestone" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.limestone
+( grep --max-count=1 "Bronze" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.bronze
+( grep --max-count=1 "Silver" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.silver
+( grep --max-count=1 "Glass" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.glass
+( grep --max-count=1 "Silk" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.silk
+( grep --max-count=1 "Cloth" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.cloth
+( grep --max-count=1 "Blood" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.blood
+( grep --max-count=1 "Pearl" .$WD/xtx.resources || echo "x 0" ) | cut -d ' ' --fields=2 | tr -d ',' > .$WD/rez.pearl
+
+
+exit 0
+

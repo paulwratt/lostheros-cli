@@ -1,0 +1,24 @@
+# LostHeroes CLI
+# control some automation
+
+## set path to base server address
+## including last /
+#server=http://locathost:7672/
+#server=http://127.0.0.1/lostheros/
+server=http://webgame.losthero.com/
+
+## multiple users in same folder
+## will create and use subfolders
+#mutliuser=true
+multiuser=false
+
+## automatically accept attacks
+## can be dangerous
+#autoattack=true
+autoattack=false
+
+## automatically destroy item
+## after every attack
+#autodestroy=true
+autodestroy=false
+

@@ -1,0 +1,64 @@
+#!/bin/sh
+
+BD="`test -d ./.bin && echo "/.bin"`"
+GW="`basename $0`"
+WD="$LH_MULTIUSER"
+
+if [ ! "$WD" = "" ]; then
+  WD="/$WD"
+fi
+
+if [ "$GW" = "lh-get" -o "$GW" = "get" ]; then
+  .$BD/lh-help --devel
+  exit 0
+fi
+
+if expr match "$0" ".*/lh\-" > /dev/null ; then
+  echo "get - LostHeros CLI"
+  echo ""
+fi
+
+# convert short names to long names
+if [ "$GW" = "cur" ]; then
+  GW="current"
+fi
+if [ "$GW" = "inv" ]; then
+  GW="inventory"
+fi
+if [ "$GW" = "res" ]; then
+  GW="resources"
+fi
+
+if [ ! -e .$WD/.profile.html -o ! "`cat ".$WD/.update" || echo ""`" = "" ]; then
+  # update all .files
+#echo ".files"
+  if ! .$BD/lh-get-update ; then
+    echo "fail get update" > /dev/null
+#    exit 1
+  fi
+fi
+
+if [ ! -e ".$WD/xtx.$GW" ]; then
+  # create all texts and values
+#echo "create"
+  if ! .$BD/lh-get-$GW ; then
+    echo "fail create $GW" > /dev/null
+    exit 1
+  fi
+  cat ".$WD/xtx.$GW"
+  exit 0
+fi
+
+if [ `stat --format="%Y" .$WD/.profile.html || echo "0"` -gt `stat --format="%Y" .$WD/xtx.$GW || echo "0"` ]; then
+  # update all texts and values
+#echo "update"
+  if ! .$BD/lh-get-$GW ; then
+    echo "fail update $GW" > /dev/null
+    exit 1
+  fi
+fi
+
+cat ".$WD/xtx.$GW"
+
+exit 0
+

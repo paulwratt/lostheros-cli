@@ -1,0 +1,148 @@
+#!/bin/sh
+if expr match "$0" ".*/lh\-" ; then
+  echo "login - LostHeros CLI"
+  echo ""
+fi
+
+EC=0
+CJ="cookie.jar"
+WD="$LH_MULTIUSER"
+BD="`test -d ./.bin && echo "/.bin"`"
+
+if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "" -o "$2" = "" ]; then
+  echo "losthero: login _username_ _password_"
+  echo " cookies: '$CJ'"
+  echo "  signup: http://webgame.losthero.com/"
+  echo "      or: http://localhost:7672/"
+  exit 1
+fi
+
+if [ ! "$WD" = "" ]; then
+  CJ="$WD/$CJ"
+  WD="/$WD"
+fi
+
+SV="`grep --no-messages "^server=" .$WD/auto.set` | cut -d = --fields=2"
+
+if [ ! "$SV" = "" ]; then
+  SV="http://webgame.losthero.com/"
+fi
+
+## logout
+if [ -e "$CJ" ]; then
+if which curl > /dev/null ; then
+  curl --silent --cookie "$CJ" {SV}logout.php > /dev/null
+  EC=$?
+  if [ $EC -gt 0 ]; then
+    echo "error: curl: $EC"
+    grep --max-count=1 "^$EC" .$BD/errors.curl
+  fi
+elif which wget > /dev/null ; then
+  wget --quiet --unlink --load-cookies="$CJ" {SV}logout.php
+  EC=$?
+  rm -f logout.php
+  if [ $EC -gt 0 ]; then
+    echo "error: wget: $EC"
+    grep --max-count=1 "^$EC" .$BD/errors.wget
+  fi
+else
+  echo "error: need 'curl' or 'wget'"
+  echo ""
+  exit 2
+fi
+
+if [ $EC -gt 0 ]; then
+  exit 3
+fi
+
+  rm -f "$CJ"
+  echo "" > ./.multiuser
+  export LH_MULTIUSER=""
+fi
+
+## after logout
+CJ="cookie.jar"
+
+if [ "$3" = "false" ];then
+  WD=""
+elif [ "$3" = "true" ]; then
+  WD="$1"
+elif grep --no-messages "^multiuser=true" "./$1/auto.set > /dev/null ; then
+  WD="$1"
+elif grep --no-messages "^multiuser=true" "./auto.set > /dev/null ; then
+  WD="$1"
+else
+  WD=""
+fi
+
+if [ ! "$WD" = "" ]; then
+  WD="/$WD"
+fi
+
+SV="`grep --no-messages "^server=" .$WD/auto.set` | cut -d = --fields=2"
+
+if [ ! "$SV" = "" ]; then
+  SV="http://webgame.losthero.com/"
+fi
+
+## login
+if which curl > /dev/null ; then
+  curl --silent --cookie-jar "$CJ" --data "username=$1" --data "password=$2" {SV}login.php > login.php
+  EC=$?
+  if [ $EC -gt 0 ]; then
+    echo "error: curl: $EC"
+    grep --max-count=1 "^$EC" .$BD/errors.curl
+  fi
+elif which wget > /dev/null ; then
+  wget --quiet --unlink --save-cookies="$CJ" --post-data="username=$1&password=$2" {SV}login.php
+  EC=$?
+  if [ $EC -gt 0 ]; then
+    echo "error: wget: $EC"
+    grep --max-count=1 "^$EC" .$BD/errors.wget
+  fi
+else
+  echo "error: need 'curl' or 'wget'"
+  echo ""
+  exit 2
+fi
+
+if [ $EC -gt 0 ]; then
+  exit 3
+fi
+
+RV="`grep 'HTTP-EQUIV' login.php | grep 'Refresh' | grep 'URL=index.php?"'`"
+if [ "$RV" = "" ]; then
+  echo "failed: login '$1'"
+  echo "signup: http://webgame.losthero.com/"
+  echo "    or: http://localhost:7672/"
+  exit 2
+fi
+rm -f login.php
+#echo "cookies: `grep "FALSE" "$CJ" | wc --lines`"
+
+if [ "$3" = "false" ];then
+  export LH_MULTIUSER=""
+elif [ "$3" = "true" ]; then
+  export LH_MULTIUSER="$1"
+elif grep --no-messages "^multiuser=true" "./$1/auto.set" > /dev/null ; then
+  export LH_MULTIUSER="$1"
+elif grep --no-messages "^multiuser=true" ./auto.set > /dev/null ; then
+  export LH_MULTIUSER="$1"
+else
+  export LH_MULTIUSER=""
+fi
+
+if [ "$LH_MULTIUSER" = "" ]; then
+  echo "" > ./.multiuser
+  echo "now" > ./.update
+else
+  mkdir -p "./$1"
+  echo "$1" > ./.multiuser
+  mv -f ./$CJ "./$1/$CJ"
+  echo "now" > "./$1/.update"
+  if [ ! -e  "./$1/auto.set" ]; then
+    cp ./auto.set "./$1/auto.set"
+  fi
+fi
+
+exit 0
