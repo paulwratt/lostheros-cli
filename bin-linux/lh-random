@@ -1,0 +1,3 @@
+#!/bin/sh
+head -c 5 /dev/random | hexdump -v -e '/1 "%d"' | tr -d -
+

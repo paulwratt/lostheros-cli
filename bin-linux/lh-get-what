@@ -1,0 +1,40 @@
+#!/bin/sh
+if expr match "$0" ".*/lh\-" > /dev/null ; then
+  echo "get-what - LostHeros CLI"
+  echo ""
+fi
+
+if [ "$1" = "" ]; then
+  echo "usage: lh-get-what <what>   maps alias's to actual"
+  exit 1
+fi
+
+UW=""
+case $GW in
+    ar|amr|armor|armour) GW="armor" ;  UW="profile" ; exit 0 ;;
+    cs|cmb|combat)    GW="combat" ;    UW="profile" ; exit 0 ;;
+    sc|cns|coins)     GW="coins" ;     UW="profile" ; exit 0 ;;
+  b|bs|btl|battle)    GW="combat" ;    UW="profile" ; exit 0 ;;
+  c|cu|cur|current)   GW="current" ;   UW="profile" ; exit 0 ;;
+    dm|dmg|damage)    GW="damage" ;    UW="profile" ; exit 0 ;;
+  d|dt|dat|data)      GW="data" ;      UW="profile" ; exit 0 ;;
+    sd|dmd|diamonds   GW="diamonds" ;  UW="profile" ; exit 0 ;;
+    se|nrg|energy     GW="energy" ;    UW="profile" ; exit 0 ;;
+    sg|gld|gold)      GW="gold" ;      UW="profile" ; exit 0 ;;
+    si|nfo|info)      GW="info" ;      UW="profile" ; exit 0 ;;
+  i|in|inv|inventory) GW="inventory" ; UW="inventory" ; exit 0 ;;
+    sl|lvl|level)     GW="level" ;     UW="profile" ; exit 0 ;;
+  p|pr|pro|profile)   GW="profile" ;   UW="profile" ; exit 0 ;;
+  r|re|res|resources) GW="resources" ; UW="resources" ; exit 0 ;;
+    sk|skl|skills)    GW="skills" ;    UW="profile" ; exit 0 ;;
+    ss|sts|stats)     GW="stats" ;     UW="profile" ; exit 0 ;;
+    xp|experience)    GW="xp" ;        UW="profile" ; exit 0 ;;
+    hp|hitpoints)     GW="hp" ;        UW="profile" ; exit 0 ;;
+esac
+
+if [ ! "$GW" = "" ]; then
+  echo $GW
+  exit 0
+fi
+
+
