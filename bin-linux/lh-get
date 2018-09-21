@@ -18,15 +18,18 @@ if expr match "$0" ".*/lh\-" > /dev/null ; then
   echo ""
 fi
 
+UW="profile"
 # convert short names to long names
 if [ "$GW" = "cur" ]; then
   GW="current"
 fi
 if [ "$GW" = "inv" ]; then
   GW="inventory"
+  UW=$GW
 fi
 if [ "$GW" = "res" ]; then
   GW="resources"
+  UW=$GW
 fi
 
 if [ ! -e .$WD/.profile.html -o ! "`cat ".$WD/.update" || echo ""`" = "" ]; then
@@ -38,22 +41,28 @@ if [ ! -e .$WD/.profile.html -o ! "`cat ".$WD/.update" || echo ""`" = "" ]; then
   fi
 fi
 
+if [ "$GW" = "data" ]; then
+  printf "Date: "
+  date
+  GW="coins"
+fi
+
 if [ ! -e ".$WD/xtx.$GW" ]; then
   # create all texts and values
 #echo "create"
-  if ! .$BD/lh-get-$GW ; then
-    echo "fail create $GW" > /dev/null
+  if ! .$BD/lh-get-$UW ; then
+    echo "fail create $UW" > /dev/null
     exit 1
   fi
-  cat ".$WD/xtx.$GW"
-  exit 0
+# cat ".$WD/xtx.$GW"
+# exit 0
 fi
 
 if [ `stat --format="%Y" .$WD/.profile.html || echo "0"` -gt `stat --format="%Y" .$WD/xtx.$GW || echo "0"` ]; then
   # update all texts and values
 #echo "update"
-  if ! .$BD/lh-get-$GW ; then
-    echo "fail update $GW" > /dev/null
+  if ! .$BD/lh-get-$UW ; then
+    echo "fail update $UW" > /dev/null
     exit 1
   fi
 fi
