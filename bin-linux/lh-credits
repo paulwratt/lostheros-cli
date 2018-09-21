@@ -1,0 +1,31 @@
+#!/bin/sh
+if expr match "$0" ".*/lh\-" > /dev/null ; then
+  echo "credits - LostHeros CLI"
+  echo ""
+fi
+
+echo "Lost Hero web browser game was created by Czech, Omorote Hideoshi, in 2010."
+echo "Last development was in 2012, with some minor fixups in 2017."
+echo "Lost Hero gets at least 2 people sign up per month, still in 2018."
+echo "The are currently only 2 regular active players, myself & the #1 player."
+echo ""
+echo "  http://webgame.losthero.com/"
+echo ""
+echo ""
+echo "Lost Hero 3D game is created by a Czech game development team."
+echo "It is available on Early Access on Steam in November or December 2018."
+echo "Lost Hero 3D game has been in development since around 2013-2015."
+echo "It has been demo'd at several games development expo's in Europe since 2017."
+echo ""
+echo "  http://www.losthero.com/"
+echo ""
+echo ""
+echo "LostHeros is a clone server for LAN parties and personel use."
+echo "It and the CLI interface is created by Kiwi, Paul Wratt in 2018."
+echo "LostHeros-Cli is used to test the accuracy of LostHeros LAN server."
+echo "LostHeros LAN server and LostHeros-CLI can be found on GitHub."
+echo ""
+echo "  http://github.com/paulwratt/lostheros-cli"
+echo ""
+exit 0
+

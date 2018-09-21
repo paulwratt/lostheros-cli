@@ -19,7 +19,7 @@ if [ "$1" = "" ]; then
   echo "       help --how     show example 'how ...' usage"
   echo "       help --where   show example 'where ...' usage"
   echo ""
-  echo "You must first signup before you can use LostHeros-CLI."
+  echo "You must first signup before you can use LostHeros CLI."
   echo "You do not need to log in to see your previous text or value info."
   echo "You may use 'what am I wearing on my head' instead of 'head'."
   echo "You may use 'where are the exits' before using 'goto x,y'."
@@ -29,12 +29,17 @@ if [ "$1" = "" ]; then
   echo "You can use 'help --long | less' or 'help --long | more' to pause."
   echo "You can use 'profile | less' or 'profile | more' to pause."
   echo "You can use 'profile' to update & view most text and values."
+  echo ""
+  printf "  default "
+  grep --no-messages "^server=" auto.set || echo "server <no set> (copy 'auto.set')"
+  echo ""
 fi
 
 if [ "$1" = "--devel" ]; then
   echo "lh-help               show alias commands for the following"
   echo "lh-help --short       show one letter commands for the following"
   echo "lh-help --long        show alias commands for the following"
+  echo "lh-credits            show credits for Lost Hero & LostHeros"
   echo "lh-login U P [true]   login, optional multiuser (use U folder)"
   echo "lh-is-logged-in [U]   tests & shows if logged in or not"
   echo "lh-cookies [U]        show cookies file (cookie.jar)"
