@@ -1,5 +1,5 @@
 #!/bin/sh
-#if expr match "$0" ".*/lh\-" ; then
+#if expr match "$0" ".*/lh\-" > /dev/null ; then
 #  echo "get Profile - LostHeros CLI"
 #  echo ""
 #fi
@@ -92,13 +92,13 @@ rm -f .$WD/.profile.cut .$WD/.info.cut .$WD/.left.cut .$WD/.right.cut
 
 
 # text
-#grep "XP:" .$WD/xtx.current > xtx.xp
-#grep "Gold" .$WD/xtx.current > xtx.gold
-#grep "Energy" .$WD/xtx.current > xtx.energy
-#grep "Diamonds" .$WD/xtx.current > xtx.diamonds
-#grep "Damage" .$WD/xtx.combat > xtx.damage
-#grep "Armor" .$WD/xtx.combat > xtx.armor
-#grep "Hit" .$WD/xtx.combat > xtx.hp
+grep "XP:" .$WD/xtx.current > xtx.xp
+grep "Gold" .$WD/xtx.current > xtx.gold
+grep "Energy" .$WD/xtx.current > xtx.energy
+grep "Diamonds" .$WD/xtx.current > xtx.diamonds
+grep "Damage" .$WD/xtx.combat > xtx.damage
+grep "Armor" .$WD/xtx.combat > xtx.armor
+grep "Hit" .$WD/xtx.combat > xtx.hp
 
 
 # bits
@@ -107,6 +107,7 @@ grep "Energy" .$WD/xtx.current | cut -d ' ' --fields=2 | cut -d '/' --fields=1 |
 grep "Diamonds" .$WD/xtx.current | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.dmd
 grep --max-count=1 "Level" .$WD/xtx.current | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.lvl
 grep "XP:" .$WD/xtx.current | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.xp
+grep "Rep" .$WD/xtx.current | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.rep
 grep "Str" .$WD/xtx.stats | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.str
 grep "Dex" .$WD/xtx.stats | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.dex
 grep "Int" .$WD/xtx.stats | cut -d ' ' --fields=2 | tr -d ',' > .$WD/val.int
