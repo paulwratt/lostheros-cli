@@ -50,6 +50,8 @@ else
 cp -rf ./bin-linux "$WD/.bin"
 cd "$WD"
 
+cp -f ./.bin/auto.set ./
+
 ln -sf ./.bin/lh-login login
 ln -sf ./.bin/lh-logout logout
 

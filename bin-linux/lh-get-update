@@ -4,9 +4,9 @@
 #  echo ""
 #fi
 
-TST=1
+TST=0
 EC=0
-CJ="cookie.jar"
+CJ=".cookie.jar"
 WD="$LH_MULTIUSER"
 BD="`test -d ./.bin && echo "/.bin"`"
 
