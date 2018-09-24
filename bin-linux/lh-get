@@ -8,7 +8,7 @@ if [ ! "$WD" = "" ]; then
   WD="/$WD"
 fi
 
-if [ "$GW" = "lh-get" -o "$GW" = "get" ]; then
+if [ "$1" = "" -a "$GW" = "lh-get" -o "$GW" = "get" ]; then
   .$BD/lh-help --devel
   exit 0
 fi
@@ -16,30 +16,33 @@ fi
 if expr match "$0" ".*/lh\-" > /dev/null ; then
   echo "get - LostHeros CLI"
   echo ""
+  if [ ! "$1" = "" ]; then
+    GW="$1"
+  fi
 fi
 
 UW="profile"
 # convert short names to long names
 case $GW in
-    ar|amr|armor|armour) GW="armor" ;  UW="profile" ; exit 0 ;;
-    cs|cmb|combat)    GW="combat" ;    UW="profile" ; exit 0 ;;
-    sc|cns|coins)     GW="coins" ;     UW="profile" ; exit 0 ;;
-  b|bs|btl|battle)    GW="combat" ;    UW="profile" ; exit 0 ;;
-  c|cu|cur|current)   GW="current" ;   UW="profile" ; exit 0 ;;
-    dm|dmg|damage)    GW="damage" ;    UW="profile" ; exit 0 ;;
-  d|dt|dat|data)      GW="data" ;      UW="profile" ; exit 0 ;;
-    sd|dmd|diamonds)  GW="diamonds" ;  UW="profile" ; exit 0 ;;
-    se|nrg|energy)    GW="energy" ;    UW="profile" ; exit 0 ;;
-    sg|gld|gold)      GW="gold" ;      UW="profile" ; exit 0 ;;
-    si|nfo|info)      GW="info" ;      UW="profile" ; exit 0 ;;
-  i|in|inv|inventory) GW="inventory" ; UW="inventory" ; exit 0 ;;
-    sl|lvl|level)     GW="level" ;     UW="profile" ; exit 0 ;;
-  p|pr|pro|profile)   GW="profile" ;   UW="profile" ; exit 0 ;;
-  r|re|res|resources) GW="resources" ; UW="resources" ; exit 0 ;;
-    sk|skl|skills)    GW="skills" ;    UW="profile" ; exit 0 ;;
-    ss|sts|stats)     GW="stats" ;     UW="profile" ; exit 0 ;;
-    xp|experience)    GW="xp" ;        UW="profile" ; exit 0 ;;
-    hp|hitpoints)     GW="hp" ;        UW="profile" ; exit 0 ;;
+    ar|amr|armor|armour) GW="armor" ;;
+    cs|cmb|combat)    GW="combat" ;;
+    sc|cns|coins)     GW="coins" ;;
+  b|bs|btl|battle)    GW="combat" ;;
+  c|cu|cur|current)   GW="current" ;;
+    dm|dmg|damage)    GW="damage" ;;
+  d|dt|dat|data)      GW="data" ;;
+    sd|dmd|diamonds)  GW="diamonds" ;;
+    se|nrg|energy)    GW="energy" ;;
+    sg|gld|gold)      GW="gold" ;;
+    si|nfo|info)      GW="info" ;;
+  i|in|inv|inventory) GW="inventory" ; UW="inventory" ;;
+    sl|lvl|level)     GW="level" ;;
+  p|pr|pro|profile)   GW="profile" ;;
+  r|re|res|resources) GW="resources" ; UW="resources" ;;
+    sk|skl|skills)    GW="skills" ;;
+    ss|sts|stats)     GW="stats" ;;
+    xp|experience)    GW="xp" ;;
+    hp|hitpoints)     GW="hp" ;;
 esac
 
 if [ ! -e .$WD/.profile.html -o ! "`cat ".$WD/.update" || echo ""`" = "" ]; then
