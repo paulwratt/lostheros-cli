@@ -1,5 +1,5 @@
 #!/bin/sh
-if expr match "$0" ".*/lh\-" ; then
+if expr match "$0" ".*/lh\-" > /dev/null ; then
   echo "logout - LostHeros CLI"
   echo ""
 fi
