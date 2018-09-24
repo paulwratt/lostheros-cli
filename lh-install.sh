@@ -75,10 +75,22 @@ ln -sf ./.bin/lh-get data
 ln -sf ./.bin/lh-get hitpoints
 ln -sf ./.bin/lh-get experience
 
+ln -sf ./.bin/lh-view head
+ln -sf ./.bin/lh-view neck
+ln -sf ./.bin/lh-view chest
+ln -sf ./.bin/lh-view weapon
+ln -sf ./.bin/lh-view offhand
+ln -sf ./.bin/lh-view hands
+ln -sf ./.bin/lh-view legs
+ln -sf ./.bin/lh-view feet
+ln -sf ./.bin/lh-view ring1
+ln -sf ./.bin/lh-view ring2
+
 ln -sf ./.bin/lh-xtx
 ln -sf ./.bin/lh-val
 ln -sf ./.bin/lh-rez
 
+ln -sf ./.bin/lh-clear
 ln -sf ./.bin/lh-export
 ln -sf ./.bin/lh-start
 

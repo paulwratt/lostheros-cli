@@ -1,0 +1,81 @@
+#!/bin/sh
+if expr match "$0" ".*/lh\-" > /dev/null ; then
+  echo "view - LostHeros CLI"
+  echo ""
+fi
+
+BD="`test -d ./.bin && echo "/.bin"`"
+GW="`basename $0`"
+CJ=".cookie.jar"
+WD="$LH_MULTIUSER"
+
+if [ "$1" = "" -a "$GW" = "lh-view" -o "$GW" = "view" ]; then
+  echo "usage: $GW <item-#> (see 'sh()' calls in .equiped.cut or .inv.cut)
+  exit 1
+fi
+
+if [ ! "$WD" = "" ]; then
+  CJ="$WD/$CJ"
+fi
+
+if [ ! -e "$CJ" ]; then
+  echo "not logged in"
+  exit 1
+fi
+
+GI="$1"
+if [ "$GW" = "lh-view" -o "$GW" = "view" ]; then
+  GW="view"
+else
+  case $GW in
+    head) GI="`cat xitm.head`" ; GT="on your head" ;;
+    neck) GI="`cat xitm.neck`" ; GT="around your neck" ;;
+    chest) GI="`cat xitm.chest`" ; GT="covering your chest" ;;
+    weapon) GI="`cat xitm.weapon`" ; GT="in your weapon hand" ;;
+    offhand) GI="`cat xitm.offhand`" ; GT="in your offhand" ;;
+    hands) GI="`cat xitm.hands`" ; GT="covering your hands" ;;
+    legs) GI="`cat xitm.legs`" ; GT="covering your legs" ;;
+    feet) GI="`cat xitm.feet`" ; GT="on your feet" ;;
+    ring1) GI="`cat xitm.ring1`" ; GT="on your finger" ;;
+    ring2) GI="`cat xitm.ring2`" ; GT="on your finger" ;;
+  esac
+fi
+
+if [ "$GI" = "" ]; then
+  echo "You do not have anything $GT."
+  exit 0
+fi
+
+if which curl > /dev/null ; then
+  EC=0
+  curl --silent --cookie "$CJ" "${SV}help/help.php?hintId=1&HelpId=item-$1,112,,5," > ".$WD/.item.php"
+  EC=$?
+  if [ $EC -gt 0 ]; then
+    echo "view error: curl: '$SV'"
+    grep --max-count=1 "^$EC" .$BD/errors.curl
+  fi
+elif which wget > /dev/null ; then
+  EC=0
+  wget --quiet --unlink --load-cookies="$CJ" -O ".$WD/.item.php" "${SV}help/help.php?hintId=1&HelpId=item-$1,112,,5,"
+  EC=$?
+  if [ $EC -gt 0 ]; then
+    echo "view error: wget: '$SV'"
+    grep --max-count=1 "^$EC" .$BD/errors.wget
+  fi
+else
+  echo "view error: need 'curl' or 'wget'"
+  echo ""
+  exit 2
+fi
+
+if [ $EC -gt 0 ]; then
+  rm -f ".$WD/.item.php"
+  exit 3
+fi
+
+tail -n +14 ".$WD/.item.php" | sed -n '/^$/!{s/<[^>]*>//g;p;}' | sed '/^\r/d' | sed '/^ \r/d' |  sed '/^  \r/d' > ".$WD/xtx.$GW"
+cp -f ".$WD/xtx.$GW" ".$WD/xit.`head -n 1 ".$WD/xtx.$GW"`"
+rm -f ".$WD/.item.php"
+
+exit 0
+

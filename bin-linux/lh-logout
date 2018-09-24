@@ -34,7 +34,7 @@ if which curl > /dev/null ; then
     grep --max-count=1 "^$EC" .$BD/errors.curl
   fi
 elif which wget > /dev/null ; then
-  wget --quiet --unlink --load-cookies -O /dev/null "$CJ" "${SV}logout.php"
+  wget --quiet --unlink --load-cookies "$CJ" -O /dev/null "${SV}logout.php"
   EC=$?
 #  rm -f logout.php
   if [ $EC -gt 0 ]; then

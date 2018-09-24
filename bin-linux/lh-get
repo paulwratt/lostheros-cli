@@ -57,6 +57,7 @@ fi
 if [ "$GW" = "data" ]; then
   printf "Date: "
   date
+  grep "^Loc" xtx.info
   GW="coins"
 fi
 
