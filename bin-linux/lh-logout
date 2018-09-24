@@ -12,12 +12,6 @@ if [ ! "$WD" = "" ]; then
   WD="/$WD"
 fi
 
-SV="`grep --no-messages "^server=" .$WD/auto.set` | cut -d = --fields=2"
-
-if [ ! "$SV" = "" ]; then
-  SV="http://webgame.losthero.com/"
-fi
-
 if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "" -o "$2" = "" ]; then
   echo "losthero: logout confirm logout"
   echo " cookies: delete '$CJ'"
@@ -25,24 +19,30 @@ if [ "$1" = "-h" -o "$1" = "--help" -o "$1" = "" -o "$2" = "" ]; then
   exit 1
 fi
 
+SV="`grep --no-messages "^server=" .$WD/auto.set | cut -d = --fields=2`"
+
+if [ ! "$SV" = "" ]; then
+  SV="http://webgame.losthero.com/"
+fi
+
 if [ -e "$CJ" ]; then
 if which curl > /dev/null ; then
-  curl --silent --cookie "$CJ" {SV}logout.php > /dev/null
+  curl --silent --cookie "$CJ" "${SV}logout.php" > /dev/null
   EC=$?
   if [ $EC -gt 0 ]; then
-    echo "error: curl: $EC"
+    echo "logout error: curl: $SV"
     grep --max-count=1 "^$EC" .$BD/errors.curl
   fi
 elif which wget > /dev/null ; then
-  wget --quiet --unlink --load-cookies "$CJ" "{SV}logout.php"
+  wget --quiet --unlink --load-cookies -O /dev/null "$CJ" "${SV}logout.php"
   EC=$?
-  rm -f logout.php
+#  rm -f logout.php
   if [ $EC -gt 0 ]; then
-    echo "error: wget: $EC"
+    echo "logout error: wget: $SV"
     grep --max-count=1 "^$EC" .$BD/errors.wget
   fi
 else
-  echo "error: need 'curl' or 'wget'"
+  echo "logout error: need 'curl' or 'wget'"
   echo ""
   exit 2
 fi

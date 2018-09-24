@@ -36,6 +36,7 @@ fi
 
 OD=`pwd`
 WD="$WD/lostheros"
+test -d "$WD" && rm -rf "$WD"
 mkdir -p "$WD"
 
 if [ "$BN" = "lh-install.sh" -a "$1" = "shared" -o "$1" = "local" -o "$2" = "local" ]; then
@@ -45,7 +46,7 @@ if [ "$BN" = "lh-install.sh" -a "$1" = "shared" -o "$1" = "local" -o "$2" = "loc
   echo "usage: ./lh-setup.sh ~/path/to/where   'lostheroes' folder will be placed"
   echo "   eg: ./lh-setup.sh ~/games"
 else
-test -d "$WD/.bin" && rm -rf "$WD/.bin"
+#test -d "$WD/.bin" && rm -rf "$WD/.bin"
 cp -rf ./bin-linux "$WD/.bin"
 cd "$WD"
 

@@ -19,7 +19,7 @@ if [ ! "$WD" = "" ]; then
   WD="/$WD"
 fi
 
-SV="`grep --no-messages "^server=" .$WD/auto.set` | cut -d = --fields=2"
+SV="`grep --no-messages "^server=" .$WD/auto.set | cut -d = --fields=2`"
 
 if [ ! "$SV" = "" ]; then
   SV="http://webgame.losthero.com/"
@@ -32,22 +32,22 @@ if [ ! -e "$CJ" ]; then
 fi
 
 if which curl > /dev/null ; then
-  curl --silent --cookie "$CJ" --get --data page=1 --data rnd=`.$BD/lh-random` ${SV}profilePage.php > .$WD/.profile.html
+  curl --silent --cookie "$CJ" --get --data page=1 --data rnd=`.$BD/lh-random` "${SV}profilePage.php" > ".$WD/.profile.html"
   EC=$?
   if [ $EC -gt 0 ]; then
-    echo "error: curl: $EC"
+    echo "update error: curl: $SV"
     grep --max-count=1 "^$EC" .$BD/errors.curl
   fi
 elif which wget > /dev/null ; then
-  wget --quiet --unlink --load-cookies "$CJ" "${SV}profilePage.php\?page=1&rnd=`.$BD/lh-random`"
+  wget --quiet --unlink --load-cookies "$CJ" -O ".$WD/.profile.html" "${SV}profilePage.php\?page=1&rnd=`.$BD/lh-random`"
   EC=$?
-  mv -f "profilePage.php*" .$WD/.profile.html
+#  mv -f "profilePage.php*" ".$WD/.profile.html"
   if [ $EC -gt 0 ]; then
-    echo "error: wget: $EC"
+    echo "update error: wget: $SV"
     grep --max-count=1 "^$EC" .$BD/errors.wget
   fi
 else
-  echo "error: need 'curl' or 'wget'"
+  echo "upadte error: need 'curl' or 'wget'"
   echo ""
   exit 2
 fi
