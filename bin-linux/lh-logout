@@ -21,7 +21,7 @@ fi
 
 SV="`grep --no-messages "^server=" .$WD/auto.set | cut -d = --fields=2`"
 
-if [ ! "$SV" = "" ]; then
+if [ "$SV" = "" ]; then
   SV="http://webgame.losthero.com/"
 fi
 

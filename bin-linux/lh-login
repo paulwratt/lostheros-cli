@@ -24,25 +24,27 @@ fi
 
 SV="`grep --no-messages "^server=" .$WD/auto.set | cut -d = --fields=2`"
 
-if [ ! "$SV" = "" ]; then
+if [ "$SV" = "" ]; then
   SV="http://webgame.losthero.com/"
 fi
 
 ## logout
 if [ -e "$CJ" ]; then
 if which curl > /dev/null ; then
-  curl --silent --cookie "$CJ" ${SV}logout.php > /dev/null
+  EC=0
+  curl --silent --cookie "$CJ" "${SV}logout.php" > /dev/null
   EC=$?
   if [ $EC -gt 0 ]; then
-    echo "logout error: curl: $SV"
+    echo "logout error: curl: '$SV'"
     grep --max-count=1 "^$EC" .$BD/errors.curl
   fi
 elif which wget > /dev/null ; then
-  wget --quiet --unlink --load-cookies="$CJ" ${SV}logout.php
+  EC=0
+  wget --quiet --unlink --load-cookies="$CJ" -O /dev/null "${SV}logout.php"
   EC=$?
-  rm -f logout.php
+#  rm -f logout.php
   if [ $EC -gt 0 ]; then
-    echo "logout error: wget: $SV"
+    echo "logout error: wget: '$SV'"
     grep --max-count=1 "^$EC" .$BD/errors.wget
   fi
 else
@@ -81,32 +83,35 @@ fi
 
 SV="`grep --no-messages "^server=" ".$WD/auto.set" | cut -d = --fields=2`"
 
-if [ ! "$SV" = "" ]; then
+if [ "$SV" = "" ]; then
   SV="http://webgame.losthero.com/"
 fi
 
 ## login
 if which curl > /dev/null ; then
+  EC=0
   curl --silent --cookie-jar "$CJ" --data "username=$1" --data "password=$2" "${SV}login.php" > login.php
   EC=$?
   if [ $EC -gt 0 ]; then
-    echo "login error: curl: $SV"
+    echo "login error: curl: '$SV'"
     grep --max-count=1 "^$EC" .$BD/errors.curl
   fi
 elif which wget > /dev/null ; then
+  EC=0
   wget --quiet --unlink --save-cookies="$CJ" --post-data="username=$1&password=$2" "${SV}login.php"
   EC=$?
   if [ $EC -gt 0 ]; then
-    echo "login error: wget: $SV"
+    echo "login error: wget: '$SV'"
     grep --max-count=1 "^$EC" .$BD/errors.wget
   fi
 else
-  echo "error: need 'curl' or 'wget'"
+  echo "login error: need 'curl' or 'wget'"
   echo ""
   exit 2
 fi
 
 if [ $EC -gt 0 ]; then
+  rm -f login.php
   exit 3
 fi
 
