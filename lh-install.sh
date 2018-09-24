@@ -45,6 +45,7 @@ if [ "$BN" = "lh-install.sh" -a "$1" = "shared" -o "$1" = "local" -o "$2" = "loc
   echo "usage: ./lh-setup.sh ~/path/to/where   'lostheroes' folder will be placed"
   echo "   eg: ./lh-setup.sh ~/games"
 else
+test -d "$WD/.bin" && rm -rf "$WD/.bin"
 cp -rf ./bin-linux "$WD/.bin"
 cd "$WD"
 
@@ -54,17 +55,30 @@ ln -sf ./.bin/lh-logout logout
 ln -sf ./.bin/lh-get profile
 ln -sf ./.bin/lh-get inventory
 ln -sf ./.bin/lh-get resources
+ln -sf ./.bin/lh-get info
+ln -sf ./.bin/lh-get current
+ln -sf ./.bin/lh-get stats
+ln -sf ./.bin/lh-get combat
+ln -sf ./.bin/lh-get damage
+ln -sf ./.bin/lh-get armor
+ln -sf ./.bin/lh-get skills
+ln -sf ./.bin/lh-get level
+ln -sf ./.bin/lh-get energy
+ln -sf ./.bin/lh-get gold
+ln -sf ./.bin/lh-get diamonds
+ln -sf ./.bin/lh-get coins
+ln -sf ./.bin/lh-get data
+ln -sf ./.bin/lh-get hitpoints
+ln -sf ./.bin/lh-get experience
 
-ln -sf ./.bin/lh-get-part info
-ln -sf ./.bin/lh-get-part current
-ln -sf ./.bin/lh-get-part stats
-ln -sf ./.bin/lh-get-part combat
-ln -sf ./.bin/lh-get-part skills
-ln -sf ./.bin/lh-get-part level
-ln -sf ./.bin/lh-get-part energy
-ln -sf ./.bin/lh-get-part gold
-ln -sf ./.bin/lh-get-part diamonds
+ln -sf ./.bin/lh-xtx
+ln -sf ./.bin/lh-val
+ln -sf ./.bin/lh-rez
 
+ln -sf ./.bin/lh-export
+ln -sf ./.bin/lh-start
+
+# we are done
 cd "$OD"
 echo "lostheros: '$WD'"
 echo "usage: cd \"$WD\" && ./lh-start.sh [username] [password] [true]"
